@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:umdb/pages/popular_movies_page.dart';
-import 'package:umdb/widgets/popular_movie_list_cubit.dart';
 
 class NewPopularMovies extends StatefulWidget {
   const NewPopularMovies({super.key});
@@ -14,9 +13,16 @@ class _NewPopularMoviesState extends State<NewPopularMovies> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Popular Movies'),
+        title: const Text(
+          'Popular Movies',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.black,
       ),
-      body: const PopularMoviesPage(),
+      body: Container(
+        color: Colors.black,
+        child: const PopularMoviesPage(),
+      ),
     );
   }
 }

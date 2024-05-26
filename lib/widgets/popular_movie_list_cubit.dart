@@ -18,7 +18,6 @@ class PopularMovieListCubit extends StatefulWidget {
 }
 
 class _PopularMovieListCubitState extends State<PopularMovieListCubit> {
-
   late Box<PopularMovieHive> _movieBox;
   late List<PopularMovieHive> _favoriteMovieHiveList;
 
@@ -47,55 +46,85 @@ class _PopularMovieListCubitState extends State<PopularMovieListCubit> {
     _favoriteMovieHiveList = _movieBox.values.toList();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    // return ListView.builder(
-    //     itemCount: _popularMovieList.length,
-    //     itemBuilder: ( context, index){
-    //       return ListTile(
-    //         title: Text(_popularMovieList[index].title ?? "No title"),
-    //         subtitle: Text(_popularMovieList[index].year ?? "1999"),
-    //       );
-    //     }
-    // );
-    return BlocBuilder<PopularMovieCubit, UiState>(
+    return Container(
+      color: Colors.black, // Set the background color to black for dark theme
+      child: BlocBuilder<PopularMovieCubit, UiState>(
         builder: (context, state) {
-          return switch (state){
-            Initial() => const Center(child: CircularProgressIndicator(),),
-            Loading() => const Center(child: CircularProgressIndicator(),),
+          return switch (state) {
+            Initial() => const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            Loading() => const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
             Success() => ListView.builder(
                 itemCount: state.movieList.length,
-                itemBuilder: ( context, index){
+                itemBuilder: (context, index) {
                   final movie = state.movieList[index];
-                  var isFavourite = _favoriteMovieHiveList.any(
-                          (favMovie) => favMovie.title == movie.title);
+                  var isFavourite = _favoriteMovieHiveList
+                      .any((favMovie) => favMovie.title == movie.title);
                   late PopularMovieHive? favoriteMovieHive;
                   if (isFavourite) {
                     favoriteMovieHive = _favoriteMovieHiveList.firstWhere(
-                            (favMovie) => favMovie.title == movie.title);
+                        (favMovie) => favMovie.title == movie.title);
                   }
                   return ListTile(
+                    leading: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(
+                        movie.image ?? '',
+                      ),
+                      onBackgroundImageError: (exception, stackTrace) {
+                        debugPrint('Image load error: $exception');
+                      },
+                      child: movie.image == null || movie.image!.isEmpty
+                          ? Icon(Icons.error, color: Colors.white)
+                          : null,
+                    ),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(movie.title ?? "No title"),
-                        const Icon(Icons.favorite_border, size: 20,)
+                        Expanded(
+                          child: Text(
+                            movie.title ?? "No title",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        Icon(
+                          isFavourite ? Icons.favorite : Icons.favorite_border,
+                          size: 20,
+                          color: isFavourite ? Colors.red : Colors.white,
+                        ),
                       ],
                     ),
-                    subtitle: Text(movie.year ?? "1999"),
+                    subtitle: Text(
+                      movie.year ?? "1999",
+                      style: const TextStyle(color: Colors.white70),
+                    ),
                     onTap: () {
-                      final movieHive = PopularMovieHive(title: movie.title, year: movie.year);
-                      isFavourite ? _deleteMovie(favoriteMovieHive!) : _saveMovie(movieHive);
+                      final movieHive = PopularMovieHive(
+                          title: movie.title, year: movie.year);
+                      isFavourite
+                          ? _deleteMovie(favoriteMovieHive!)
+                          : _saveMovie(movieHive);
                     },
-                    tileColor: isFavourite? Colors.greenAccent : Colors.white,
+                    tileColor: isFavourite
+                        ? Colors.greenAccent.withOpacity(0.2)
+                        : Colors.black,
                   );
                 },
-            ),
-            Error() => const Center(child: Text('Something went wrong!'),),
+              ),
+            Error() => const Center(
+                child: Text(
+                  'Something went wrong!',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
           };
-        }
+        },
+      ),
     );
-
   }
 }

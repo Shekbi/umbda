@@ -13,9 +13,16 @@ class _NewTopRatedMoviesState extends State<NewTopRatedMovies> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Top Rated Movies'),
+        title: const Text(
+          'Top Rated Movies',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.black,
       ),
-      body: const TopRatedMoviesPage(),
+      body: Container(
+        color: Colors.black,
+        child: const TopRatedMoviesPage(),
+      ),
     );
   }
 }
